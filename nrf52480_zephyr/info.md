@@ -3,10 +3,15 @@
 ## Memory map of the dev board
 [here](https://learn.adafruit.com/introducing-the-adafruit-nrf52840-feather/hathach-memory-map)
 
+## Entering UF2 bootloader mode (USB flash disk)
+Need to pull `RST` to `GND` 2 times during 0.5 seconds.
+If the board is already in some failed state (red LED is quickly pulsing) 
+a single bridging of `RST` to `GND` is enough to enter `UF2 bootloader` mode.
+
 ## How to get command line with a proper environment after installing NRF Connect DK via VSCode
 
-1. on the 'nRF Connect' extension tab click on 'Manage toolchains'
-2. select 'Open Terminal Profile' in the opened dropdown
+1. on the 'nRF Connect' extension tab click on `Manage toolchains`
+2. select `Open Terminal Profile` in the opened dropdown
 3. in the terminal execute (more info [here](https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-toolchain-manager/nrfutil-toolchain-manager_0.14.1.html)): 
 ```
 nrfutil toolchain-manager env --as-script > ~/path/to/env_file.sh
@@ -90,7 +95,7 @@ When the same project is built as `sysbuild` it doesn't work as-is.
 
 To make it work it's important to have `partition manager` subsys from `nrf` enabled 
 (in case of a trivial hello world it was just working. I guess the mere fact of `sysbuild` enables it) 
-and make sure that `app` partition starts not at 0x0, but at 0x26000. 
+and make sure that `app` partition starts not at `0x0`, but at `0x26000`. 
 This can be achieved by providing a `pm_static.yml` with the following
 content:
 ```
