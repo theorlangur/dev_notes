@@ -162,3 +162,19 @@ To make it check and attempt to steer on multiple channels:
 CONFIG_ZIGBEE_CHANNEL_SELECTION_MODE_MULTI=y
 CONFIG_ZIGBEE_CHANNEL_MASK=0x7FFF800
 ```
+
+### Including zboss and other zigbee headers in C++ project
+
+it's important for the zigbee API to have C names, no C++ name mangling.
+So zigbee headers should be included like:
+```
+extern "C"
+{
+#include <zboss_api.h>
+#include <zboss_api_addons.h>
+#include <zb_mem_config_med.h>
+#include <zigbee/zigbee_app_utils.h>
+#include <zigbee/zigbee_error_handler.h>
+#include <zb_nrf_platform.h>
+}
+```
