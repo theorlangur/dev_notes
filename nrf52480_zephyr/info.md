@@ -113,3 +113,16 @@ By default whatever toolchain file you pass to the original cmake call it's not 
 cmake call for sysbuild.
 To make that happen in the file `/path/to/zephyr/share/sysbuild/cmake/modules/sysbuild_extensions.cmake`
 we need to find a variable `shared_cmake_variables_list` and add `CMAKE_TOOLCHAIN_FILE` to the list
+
+## Zigbee
+
+ncs-zigbee addon (a non-deprecated way of doing zigbee) doesn't seem to support nrf52840 at the moment.
+So the only working way left is via `nrf` and `zigbee` subsystem.
+
+### Channel selection
+
+To make it check and attempt to steer on multiple channels:
+```
+CONFIG_ZIGBEE_CHANNEL_SELECTION_MODE_MULTI=y
+CONFIG_ZIGBEE_CHANNEL_MASK=0x7FFF800
+```
