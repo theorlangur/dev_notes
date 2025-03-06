@@ -8,9 +8,13 @@
 1. on the 'nRF Connect' extension tab click on 'Manage toolchains'
 2. select 'Open Terminal Profile' in the opened dropdown
 3. in the terminal execute (more info [here](https://docs.nordicsemi.com/bundle/nrfutil/page/nrfutil-toolchain-manager/nrfutil-toolchain-manager_0.14.1.html)): 
-> nrfutil toolchain-manager env --as-script > ~/path/to/env_file.sh
+```
+nrfutil toolchain-manager env --as-script > ~/path/to/env_file.sh
+```
 4. in the exported file add also export of the following env variable:
-> export ZEPHYR_BASE=/path/to/ncs/toolchain/zephyr (e.g. /home/user/ncs/v2.9.0/zephyr)
+```
+export ZEPHYR_BASE=/path/to/ncs/toolchain/zephyr (e.g. /home/user/ncs/v2.9.0/zephyr)
+```
 
 
 ## Using LLVM tools (clang, lld) to build
@@ -25,29 +29,35 @@ It makes sense to make a copy of the environment script and:
 I made llvm toolchain work with a picolibc so far (also C++). As a result the following cmake toolchain file
 needs to be provided to the build process:
 
-> set(triple arm-zephyr-eabi)
-> set(arch thumb)
-> set(instr v7e-m)
-> set(XCMAKE_SYSROOT /home/user/ncs/toolchains/b77d8c1312/opt/zephyr-sdk/${triple}/${triple})
-> set(XMAKE_SYSROOT /home/user/ncs/toolchains/b77d8c1312/opt/zephyr-sdk/${triple})
-> 
-> set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I${XCMAKE_SYSROOT}/include/c++/12.2.0")
-> set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I${XCMAKE_SYSROOT}/include/c++/12.2.0/${triple}/${arch}/${instr}/nofp")
-> set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -L${XMAKE_SYSROOT}/picolibc/${triple}/lib/${arch}/${instr}/nofp")
-> set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -L${XMAKE_SYSROOT}/picolibc/lib/gcc/${triple}/12.2.0/${arch}/${instr}/nofp")
+```
+set(triple arm-zephyr-eabi)
+set(arch thumb)
+set(instr v7e-m)
+set(XCMAKE_SYSROOT /home/user/ncs/toolchains/b77d8c1312/opt/zephyr-sdk/${triple}/${triple})
+set(XMAKE_SYSROOT /home/user/ncs/toolchains/b77d8c1312/opt/zephyr-sdk/${triple})
+
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I${XCMAKE_SYSROOT}/include/c++/12.2.0")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -I${XCMAKE_SYSROOT}/include/c++/12.2.0/${triple}/${arch}/${instr}/nofp")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -L${XMAKE_SYSROOT}/picolibc/${triple}/lib/${arch}/${instr}/nofp")
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -L${XMAKE_SYSROOT}/picolibc/lib/gcc/${triple}/12.2.0/${arch}/${instr}/nofp")
+```
 
 Such a toolchain file can be passed by using a `--toolchain <path/to/cmake_toolchain_file>` option.
 
 Sometimes it might be required to explicitly state in the `prj.conf`: `CONFIG_PICOLIBC=y`
 
 Commandline west invocation example to configure and build the project:
-> west build --build-dir build . --sysbuild --pristine --board promicro_nrf52840/nrf52840/uf2 -- -DNCS_TOOLCHAIN_VERSION=NONE -DCONF_FILE=prj-pico.conf --toolchain /home/user/ncs/toolchains/llvm_toolchain.cmake
+```
+west build --build-dir build . --sysbuild --pristine --board promicro_nrf52840/nrf52840/uf2 -- -DNCS_TOOLCHAIN_VERSION=NONE -DCONF_FILE=prj-pico.conf --toolchain /home/user/ncs/toolchains/llvm_toolchain.cmake
+```
 
 `--sysbuild` strictly speaking is not needed as it's implicit, but still.
 `-DCONF_FILE=...` allows to use an arbitrary file as a configuration, not just a default `prj.conf`
 
 Also it's important in the `CMakeLists.txt` to explicitly link against `c` library like:
-> target_link_libraries(app PRIVATE c)
+```
+target_link_libraries(app PRIVATE c)
+```
 
 otherwise there will be linker errors about undefined symbols.
 
@@ -59,13 +69,19 @@ in the `cmake/linker/lld/linker_libraries.cmake` file we need to comment out the
 ### Enabling C++ support
 
 Add to `prj.conf`:
-> CONFIG_CPP=y
+```
+CONFIG_CPP=y
+```
 
 to enable `C++23` support:
-> CONFIG_STD_CPP2B=y
+```
+CONFIG_STD_CPP2B=y
+```
 
 In `CMakeLists.txt`:
-> target_link_libraries(app PRIVATE stdc++ supc++)
+```
+target_link_libraries(app PRIVATE stdc++ supc++)
+```
 
 ## Building sysbuild VS nosysbuild
 
@@ -77,29 +93,33 @@ To make it work it's important to have `partition manager` subsys from `nrf` ena
 and make sure that `app` partition starts not at 0x0, but at 0x26000. 
 This can be achieved by providing a `pm_static.yml` with the following
 content:
-> reserved_off:
->   address: 0x00000
->   size: 0x26000
+```
+reserved_off:
+  address: 0x00000
+  size: 0x26000
+```
 
 Whatever partitions are specified: all declared flash memory must be covered.
 `app` is allocated dynamically based on the other partitions.
 
 Static Partition configuration for Zigbee (not yet proven) that at least allows the build:
-> reserved_off:
->   address: 0x00000
->   size: 0x26000
-> zboss_nvram:
->   address: 0xed000
->   size: 0x4000
-> zboss_product_config:
->   address: 0xf1000
->   size: 0x0800
-> settings_storage:
->   address: 0xf1800
->   size: 0x2800
-> bootloader:
->   address: 0xf4000
->   size: 0xc000
+```
+reserved_off:
+  address: 0x00000
+  size: 0x26000
+zboss_nvram:
+  address: 0xed000
+  size: 0x4000
+zboss_product_config:
+  address: 0xf1000
+  size: 0x0800
+settings_storage:
+  address: 0xf1800
+  size: 0x2800
+bootloader:
+  address: 0xf4000
+  size: 0xc000
+```
 
 `app` will be located between 0x26000 and 0xed000
 
