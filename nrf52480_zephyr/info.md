@@ -8,6 +8,17 @@ Need to pull `RST` to `GND` 2 times during 0.5 seconds.
 If the board is already in some failed state (red LED is quickly pulsing) 
 a single bridging of `RST` to `GND` is enough to enter `UF2 bootloader` mode.
 
+## Reading from serial
+
+With `screen` app we can read printf's from the board as: 
+```
+screen /dev/<tty device>
+```
+example:
+```
+screen /dev/ttyACM0
+```
+
 ## How to get command line with a proper environment after installing NRF Connect DK via VSCode
 
 1. on the 'nRF Connect' extension tab click on `Manage toolchains`
