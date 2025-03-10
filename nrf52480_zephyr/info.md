@@ -8,6 +8,15 @@ Need to pull `RST` to `GND` 2 times during 0.5 seconds.
 If the board is already in some failed state (red LED is quickly pulsing) 
 a single bridging of `RST` to `GND` is enough to enter `UF2 bootloader` mode.
 
+## Erasing flash
+Could not find a proper way of erasing the settings partitions. 
+Tried making a `uf2` file that writes to the `settings_storage` partition addresses with zeroes.
+Didn't work. Apparently here's what `ZMK` [does](https://zmk.dev/docs/troubleshooting/connection-issues#building-a-reset-firmware) in this case.
+And building that `settings_reset` is just linking additionally a c-file `app/src/settings/reset_settings_on_start.c` with `SYS_INIT` macro call that schedules 
+`zmk_settings_erase` call.
+And according to [this](https://zmk.dev/docs/troubleshooting/connection-issues#reset-split-keyboard-procedure) it should be applied (flashed) once
+and then non-reset firmware should be flashed.
+
 ## Reading from serial
 
 With a simple `cat` app we can read printf's from the board as: 
