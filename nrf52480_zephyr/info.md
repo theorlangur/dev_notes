@@ -17,6 +17,10 @@ And building that `settings_reset` is just linking additionally a c-file `app/sr
 And according to [this](https://zmk.dev/docs/troubleshooting/connection-issues#reset-split-keyboard-procedure) it should be applied (flashed) once
 and then non-reset firmware should be flashed.
 
+## Powering up the board
+Apparently aside from `B+` and `B-` you can use `VDD` and `GND` on the back of the board near the `DIO` and `CLK` pins (needed for `SWD` debugging).
+I guess this would be the way to power the board with a cell (or AA, AAA) battery (with some step up boost converter naturally)
+
 ## Reading from serial
 
 With a simple `cat` app we can read printf's from the board as: 
