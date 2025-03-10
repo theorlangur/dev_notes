@@ -10,13 +10,13 @@ a single bridging of `RST` to `GND` is enough to enter `UF2 bootloader` mode.
 
 ## Reading from serial
 
-With `screen` app we can read printf's from the board as: 
+With a simple `cat` app we can read printf's from the board as: 
 ```
-screen /dev/<tty device>
+cat /dev/<tty device>
 ```
 example:
 ```
-screen /dev/ttyACM0
+cat /dev/ttyACM0
 ```
 
 ## How to get command line with a proper environment after installing NRF Connect DK via VSCode
