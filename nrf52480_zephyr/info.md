@@ -191,3 +191,37 @@ extern "C"
 #include <zb_nrf_platform.h>
 }
 ```
+
+## Debugging with OpenOCD
+
+### Start openocd
+To start `openocd` with this board using STLink-V2:
+```
+openocd -f interface/stlink.cfg -f target/nrf52.cfg
+```
+
+### Flash image
+Connect with `telnet` to `localhost:4444` like:
+```
+telnet localhost 4444
+```
+To flash image (important: zephyr.***bin***):
+```
+program path/to/zephyr.bin 0x26000 reset
+```
+
+### Example of VSCode debug configuration
+***Important*** GDB needs an `ELF` file, not `BIN`
+don't forget to set `useExtendedRemote` to `true`
+```
+{
+  "name": "Launch",
+    "type": "cppdbg",
+    "request": "launch",
+    "program": "${workspaceRoot}/path/to/zephyr.elf",
+    "cwd": "${workspaceFolder}",
+    "miDebuggerServerAddress": "localhost:3333",
+    "useExtendedRemote": true,
+    "MIMode": "gdb"
+}
+```
