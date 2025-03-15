@@ -199,6 +199,7 @@ Flashed with a command executed via OpenOCD:
 flash write_image erase nice_nano_bootloader-0.6.0_s140_6.1.1.hex
 ```
 **Note**: [here](https://nicekeyboards.com/docs/nice-nano/#bootloader) it's claimed that Adafruit's bootloader for nrf52 could work
+**Update**: it does work. e.g. `adm_b_nrf52840_1_bootloader-0.9.2_s140_6.1.1.hex`
 
 
 ## Debugging with OpenOCD
