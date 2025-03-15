@@ -192,6 +192,15 @@ extern "C"
 }
 ```
 
+## Bootloader
+[This](https://nicekeyboards.com/assets/nice_nano_bootloader-0.6.0_s140_6.1.1.hex) one worked (I was able to flash it and restore one of my pro micro boards)
+Flashed with a command executed via OpenOCD:
+```
+flash write_image erase nice_nano_bootloader-0.6.0_s140_6.1.1.hex
+```
+**Note**: [here](https://nicekeyboards.com/docs/nice-nano/#bootloader) it's claimed that Adafruit's bootloader for nrf52 could work
+
+
 ## Debugging with OpenOCD
 
 ### Start openocd
