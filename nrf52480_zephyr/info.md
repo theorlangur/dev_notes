@@ -209,6 +209,18 @@ To start `openocd` with this board using STLink-V2:
 ```
 openocd -f interface/stlink.cfg -f target/nrf52.cfg
 ```
+***Update***
+debugging with STLink-V2 sucks, stepping with a debugger is a nightmare since it always halts in panic for
+whatever reason.
+A cheap `CMSIS DAP/DAPLink Simulator STM32 Debugger` delivers a much better experience.
+To start `openocd` with `CMSIS-DAP`:
+```
+openocd -f interface/cmsis-dap.cfg -f target/nrf52.cfg
+```
+Pins are to be connected as:
+SWDCLK -> TCK/CK
+SWDDIO -> TMS/IO
+GND, 3.3V - self-explanatory
 
 ### Flash image
 Connect with `telnet` to `localhost:4444` like:
