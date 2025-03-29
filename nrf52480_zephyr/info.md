@@ -220,12 +220,12 @@ openocd -f interface/cmsis-dap.cfg -f target/nrf52.cfg
 ```
 Pins are to be connected as:
 
-| SWD Pin | DAPLink Pin |
-|---|---|
-| SWDCLK | TCK/CK|
-| SWDDIO | TMS/IO|
-| GND| GND|
-| 3.3V| 3.3V|
+| SWD Pin| DAPLink Pin |
+|--------|-------------|
+| SWDCLK | TCK/CK      |
+| SWDDIO | TMS/IO      |
+| GND    | GND         |
+| 3.3V   | 3.3V        |
 
 ### Flash image
 Connect with `telnet` to `localhost:4444` like:
