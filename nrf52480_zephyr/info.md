@@ -199,7 +199,8 @@ Flashed with a command executed via OpenOCD:
 flash write_image erase nice_nano_bootloader-0.6.0_s140_6.1.1.hex
 ```
 **Note**: [here](https://nicekeyboards.com/docs/nice-nano/#bootloader) it's claimed that Adafruit's bootloader for nrf52 could work
-**Update**: it does work. e.g. `adm_b_nrf52840_1_bootloader-0.9.2_s140_6.1.1.hex`
+**Update**: it does work. e.g.\
+`adm_b_nrf52840_1_bootloader-0.9.2_s140_6.1.1.hex`
 
 
 ## Debugging with OpenOCD
@@ -218,9 +219,13 @@ To start `openocd` with `CMSIS-DAP`:
 openocd -f interface/cmsis-dap.cfg -f target/nrf52.cfg
 ```
 Pins are to be connected as:
-SWDCLK -> TCK/CK
-SWDDIO -> TMS/IO
-GND, 3.3V - self-explanatory
+
+| SWD Pin | DAPLink Pin |
+|---|---|
+| SWDCLK | TCK/CK|
+| SWDDIO | TMS/IO|
+| GND| GND|
+| 3.3V| 3.3V|
 
 ### Flash image
 Connect with `telnet` to `localhost:4444` like:
