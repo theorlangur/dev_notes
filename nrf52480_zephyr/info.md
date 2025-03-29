@@ -180,7 +180,7 @@ CONFIG_ZIGBEE_CHANNEL_MASK=0x7FFF800
 
 it's important for the zigbee API to have C names, no C++ name mangling.
 So zigbee headers should be included like:
-```
+```cpp
 extern "C"
 {
 #include <zboss_api.h>
