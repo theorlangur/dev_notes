@@ -287,7 +287,7 @@ extern "C" void zephyr_rtt_mutex_unlock()
 ```
 
 #### OpenOCD part
-After [starting `OpenOCD`](#-start-openocd) execute the following commands:
+After [starting `OpenOCD`](#start-openocd) execute the following commands:
 ```
 # Halt the CPU to safely scan RAM for the RTT block
 halt
@@ -308,5 +308,5 @@ rtt server start 9090 0
 resume
 ```
 
-After this connecting with a telnet to localhost:9090 should show
+After this connecting with a telnet to `localhost:9090` should show
 the logging messaging.
