@@ -252,3 +252,61 @@ don't forget to set `useExtendedRemote` to `true`
     "MIMode": "gdb"
 }
 ```
+
+### Logging with `printk` and `LOG_*` over OpenOCD
+The way that worked is: `SEGGER RTT` (Real-Time Transfer)
+#### Zephyr application part
+Additional configuration needed in `prj.conf`:
+```
+CONFIG_LOG=y
+CONFIG_LOG_MAX_LEVEL=4
+CONFIG_LOG_BACKEND_RTT=y
+CONFIG_USE_SEGGER_RTT=y
+CONFIG_PRINTK=y
+```
+`CONFIG_LOG` was the part that forced linking.
+It requires the existence of 2 functions (otherwise it fails with linking errors):
+```cpp
+void zephyr_rtt_mutex_lock();
+void zephyr_rtt_mutex_unlock();
+```
+It seems that there's no ready-to-use implementations for these and we need to provide
+those.
+This has worked:
+```cpp
+K_MUTEX_DEFINE(rtt_term_mutex);
+extern "C" void zephyr_rtt_mutex_lock()
+{
+	k_mutex_lock(&rtt_term_mutex, K_FOREVER);
+}
+
+extern "C" void zephyr_rtt_mutex_unlock()
+{
+	k_mutex_unlock(&rtt_term_mutex);
+}
+```
+
+#### OpenOCD part
+After [starting `OpenOCD`](#-start-openocd) execute the following commands:
+```
+# Halt the CPU to safely scan RAM for the RTT block
+halt
+
+# Setup RTT: Scan RAM (0x20000000 is start of RAM for nRF52840)
+# Scan size (e.g., 0x10000 = 64kB, the full RAM)
+# ID ("SEGGER RTT" is the default used by Zephyr/SEGGER)
+rtt setup 0x20000000 0x10000 "SEGGER RTT"
+
+# Start RTT processing in OpenOCD
+rtt start
+
+# Start a TCP server on port 9090 for RTT channel 0 (terminal output)
+# You can choose a different port if 9090 is busy
+rtt server start 9090 0
+
+# Resume CPU execution
+resume
+```
+
+After this connecting with a telnet to localhost:9090 should show
+the logging messaging.
