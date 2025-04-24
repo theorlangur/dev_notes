@@ -338,7 +338,7 @@ zigbee_configure_sleepy_behavior(true);
 #### CONFIG_PM
 
 For nrf52840 it makes no sense to enable that. You won't even be able to, because Nordic
-has intentionally removed that since according to their claims the system *automagically*
+has intentionally removed that since according to their claims the system [*automagically*](https://github.com/nrfconnect/sdk-zephyr/commit/96b38273138f05dd06cf7a58fa361f401e773e5e)
 goes into a low-power state without hints from the developer. Seems to be true.
 #### CONFIG_PM_DEVICE
 
