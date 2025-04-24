@@ -202,6 +202,10 @@ flash write_image erase nice_nano_bootloader-0.6.0_s140_6.1.1.hex
 **Update**: it does work. e.g.\
 `adm_b_nrf52840_1_bootloader-0.9.2_s140_6.1.1.hex`
 
+### Bootloader and `nrf5 mass_erase`
+It appears that after `mass_erase` flashing the chip with OpenOCD it's important to flash again the bootloader as described earlier. 
+However it doesn't for some reason allow flashing the app with `program ...`. It gets flashed but it doesn't get executed.
+What helps is connecting via USB and flashing with UF2 image. After that OpenOCD works again.
 
 ## Debugging with OpenOCD
 
@@ -310,3 +314,62 @@ resume
 
 After this connecting with a telnet to `localhost:9090` should show
 the logging messaging.
+
+## Power consumption notes
+### Zigbee
+ZBOSS stack issues a dedicated signal `ZB_COMMON_SIGNAL_CAN_SLEEP`.
+The normal default thing to do is to call `zb_sleep_now`.
+The `zigbee_default_signal_handler` does exactly that if you let it handle the signal.
+
+**Important**
+
+`zb_sleep_now` won't put the chip to sleep if it's configured to be a `router` or a `coordinator`.
+It **needs** to be an `end device` in order to be able to actually sleep.
+
+Before enabling Zigbee the following functions should be called to configure/enable 
+the power saving techniques:
+
+```cpp
+zb_set_rx_on_when_idle(false);
+zigbee_configure_sleepy_behavior(true);
+```
+
+### Zephyr
+#### CONFIG_PM
+
+For nrf52840 it makes no sense to enable that. You won't even be able to, because Nordic
+has intentionally removed that since according to their claims the system *automagically*
+goes into a low-power state without hints from the developer. Seems to be true.
+#### CONFIG_PM_DEVICE
+
+Enabling this option in theory should've allowed various drivers to properly react to the events
+of suspending/resuming the system. In practice however it has resulted in the inability of
+the board to lower the power consumption below 1.5mA (without it values **<10uA** were achieved).
+#### CONFIG_RAM_POWER_DOWN_LIBRARY
+
+This option will allow you to have the functionality to power down the unused sections of RAM.
+A call to `power_down_unused_ram();` will do the trick. Naturally no heap usage should occur
+and all the required memory should be accounted for statically at compile time 
+(constexpr, constinit et al are your friends).
+#### Disabling periphery in Device Tree
+
+Unused periphery should also be disabled in the device tree by providing an overlay file
+that turns them off.
+The content of such file may look like:
+```
+&i2c1 {
+    status = "disabled";
+};
+&adc {
+    status = "disabled";
+};
+&bt_hci_sdc {
+    status = "disabled";
+};
+```
+To use the overlay file the following should be put into CMakeLists.txt **before**
+calling `find_package(Zephyr...`:
+```
+set(EXTRA_DTC_OVERLAY_FILE "dts.overlay")
+find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
+```
