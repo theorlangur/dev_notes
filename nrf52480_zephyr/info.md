@@ -373,3 +373,8 @@ calling `find_package(Zephyr...`:
 set(EXTRA_DTC_OVERLAY_FILE "dts.overlay")
 find_package(Zephyr REQUIRED HINTS $ENV{ZEPHYR_BASE})
 ```
+
+#### Stack size
+Apparently 256 bytes of stack is not enough for a thread that intends to perform i2c
+communication. Using 512 seems ok. Pity.
+
