@@ -334,6 +334,16 @@ zb_set_rx_on_when_idle(false);
 zigbee_configure_sleepy_behavior(true);
 ```
 
+### Power supply pins
+When supplying this board with power via B+/B- or RAW ~400uA will be wasted (probably on internal LDO).
+The most power-efficient way to power this board is over VDD/GND on the back of the board (pads near other
+pads for SWD debugging)
+
+#### Note:
+turning off ADC, regulators, pins doesn't affect really the consumption. It seems to be efficient enough already.
+Really the way of power-supplying...
+
+
 ### Zephyr
 #### CONFIG_PM
 
