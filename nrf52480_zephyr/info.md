@@ -334,6 +334,14 @@ zb_set_rx_on_when_idle(false);
 zigbee_configure_sleepy_behavior(true);
 ```
 
+#### Long poll
+As it appears when the poll clusters says 'long poll' is disabled by setting 0xffffffff, it doesn't matter to the zigbee stack
+as it keeps 'long polling' over standard 5 second intervals (sub- 7.5 seconds to get retained messages from the parent if there are any).
+Long poll is done in that case over MAC-level IEEE802.15.4 `Data Request` commands.
+At least one way to truly disable it is to call `zb_zdo_pim_set_long_poll_interval` with a time value in milliseconds **after** the device
+has joined the network. In this case `Data Request` are not sent up to the next `check-in` interval passes and when the `check-in` is sent.
+To be investigated further.
+
 ### Power supply pins
 When supplying this board with power via B+/B- or RAW ~400uA will be wasted (probably on internal LDO).
 The most power-efficient way to power this board is over VDD/GND on the back of the board (pads near other
