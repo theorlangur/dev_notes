@@ -174,3 +174,17 @@ CONFIG_UART_CONSOLE=y
 CONFIG_PRINTK=y
 CONFIG_UART_INTERRUPT_DRIVEN=y
 ```
+
+## nRF Connect VSCode
+### Properly re-running west from extension
+Need to pass a toolchain file not as a `--toolchain <path to toolchain>`, but `-DCMAKE_TOOLCHAIN_FILE=<path>`
+
+### Stale build
+Complains about "Unable to find /usr/bin/clang" -> created a sym-link in toolchains/<hashversion>/usr/bin/clang
+
+## Debugging
+### Break on Zephyr Fatal Error
+Possibly set a breakpoint on `k_sys_fatal_error_handler`
+### Issue with debuggin via DK with VSCode when building with llvm
+It tries to call `clang` as if it's gcc, with `interpreter` parameters
+Solution not found yet
